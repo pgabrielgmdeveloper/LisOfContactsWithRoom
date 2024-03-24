@@ -118,17 +118,17 @@ fun createContato(navController: NavController) {
                         }else {
                             val contato = Contato(name,sobrenome,idade,phone)
                             val contatoDao = AppDataBase.getInstance(context).contatoDao()
-                           contatoDao.gravar(mutableListOf(contato))
+                            contatoDao.gravar(mutableListOf(contato))
                             error = false
                         }
                     }
                     scope.launch (Dispatchers.Main) {
                         if (error) {
-                            Toast.makeText(context,"Por favor preencher todos os campos", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"Por favor preencher todos os campos", Toast.LENGTH_LONG).show()
                         }else {
-                            Toast.makeText(context,"Contato Salvo com sucesso !!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"Contato Salvo com sucesso !!", Toast.LENGTH_LONG).show()
+                            navController.navigate("listaContatos")
                         }
-
                     }
 
                 },
@@ -141,12 +141,4 @@ fun createContato(navController: NavController) {
             }
         }
     }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun t () {
-    createContato(navController = rememberNavController())
 }

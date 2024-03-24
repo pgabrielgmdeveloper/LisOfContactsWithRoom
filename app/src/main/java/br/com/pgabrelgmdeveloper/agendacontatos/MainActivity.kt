@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import br.com.pgabrelgmdeveloper.agendacontatos.ui.theme.AgendaContatosTheme
 import br.com.pgabrelgmdeveloper.agendacontatos.views.createContato
 import br.com.pgabrelgmdeveloper.agendacontatos.views.listaContato
@@ -29,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     composable("listaContatos"){
                         listaContato(navController)
                     }
-                    composable("updateContato"){ updateContatoView(navController = navController) }
+                    composable("updateContato/{uid}", arguments = listOf(navArgument("uid"){})){ updateContatoView(navController = navController, it.arguments?.getString("uid").toString()) }
                     composable("createContato"){ createContato(navController = navController) }
                 }
 
