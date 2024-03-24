@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
 }
 
 android {
@@ -50,11 +51,14 @@ android {
 }
 
 dependencies {
-    val room_version = "2.6.1"
     val nav_version = "2.7.7"
+    val room_version = "2.6.1"
+
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
     implementation ("androidx.navigation:navigation-compose:$nav_version")
+    kapt ("androidx.room:room-compiler:$room_version")
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

@@ -1,6 +1,7 @@
 package br.com.pgabrelgmdeveloper.agendacontatos.views
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,21 +20,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import br.com.pgabrelgmdeveloper.agendacontatos.Dao.AppDataBase
 import br.com.pgabrelgmdeveloper.agendacontatos.components.OutlineTextFieldCustom
+import br.com.pgabrelgmdeveloper.agendacontatos.model.Contato
 import br.com.pgabrelgmdeveloper.agendacontatos.ui.theme.Purple40
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun createContato(navController: NavController) {
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     var name by remember {
         mutableStateOf("")
     }
@@ -89,20 +98,43 @@ fun createContato(navController: NavController) {
                     .fillMaxWidth()
             )
             OutlineTextFieldCustom(
-                value = sobrenome,
+                value = phone,
                 changeValue = {
-                    sobrenome = it
+                    phone = it
                 },
-                label = "sobrenome",
-                keyOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                label = "Telefone",
+                keyOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier
                     .padding(10.dp, 0.dp, 10.dp, 10.dp)
                     .fillMaxWidth()
             )
 
             Button(
-                onClick = { navController.navigate("updateContato") },
-                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                onClick = {
+                    var error = true
+                    scope.launch(Dispatchers.IO){
+                        if (name.isEmpty() || sobrenome.isEmpty() || idade.isEmpty() || phone.isEmpty()) {
+                            error = true
+                        }else {
+                            val contato = Contato(name,sobrenome,idade,phone)
+                            val contatoDao = AppDataBase.getInstance(context).contatoDao()
+                           contatoDao.gravar(mutableListOf(contato))
+                            error = false
+                        }
+                    }
+                    scope.launch (Dispatchers.Main) {
+                        if (error) {
+                            Toast.makeText(context,"Por favor preencher todos os campos", Toast.LENGTH_SHORT).show()
+                        }else {
+                            Toast.makeText(context,"Contato Salvo com sucesso !!", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(text = "CADASTRAR")
